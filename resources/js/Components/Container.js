@@ -14,6 +14,66 @@ export default class Container extends React.Component {
         enabled: true,
         texts: [],
       },
+      items: [
+        {
+          text: 'test1',
+          action: 'https://google.com'
+        },
+        {
+          type: 'group',
+          items: [
+            {
+              text: 'test2',
+              action: 'https://google.com'
+            },
+            {
+              text: 'test3',
+              action: 'https://google.com'
+            },
+            {
+              text: 'test4',
+              action: 'https://google.com'
+            },
+            {
+              text: 'test5',
+              action: 'https://google.com'
+            },
+          ],
+        },
+        {
+          text: 'test6',
+          action: 'https://google.com'
+        },
+        {
+          text: 'test7',
+          action: 'https://google.com'
+        },
+        {
+          type: 'group',
+          items: [
+            {
+              text: 'test8',
+              action: 'https://google.com'
+            },
+            {
+              text: 'test9',
+              action: 'https://google.com'
+            },
+            {
+              text: 'test10',
+              action: 'https://google.com'
+            },
+            {
+              text: 'test11',
+              action: 'https://google.com'
+            },
+          ],
+        },
+        {
+          text: 'test12',
+          action: 'https://google.com'
+        },
+      ],
       selected: -1,
     };
   }
@@ -29,8 +89,9 @@ export default class Container extends React.Component {
         event.preventDefault();
         return true;
       } else if (event.code === "ArrowDown") {
-        this.setState({selected: this.state.selected + 1});
-        this.autoFocus();
+        if (!(this.state.selected > this.getItems().length - 2)) {
+          this.setState({selected: this.state.selected + 1});
+        }
       } else if (event.code === "ArrowUp") {
         if (!(this.state.selected < 0)) {
           this.setState({selected: this.state.selected - 1});
@@ -67,23 +128,64 @@ export default class Container extends React.Component {
     }
   };
 
-  items = () => {
+  getItems = () => {
     let items = [];
 
-    for (let i = 0; i < 100; i++) {
-      items.push(i);
+    for (const item of this.state.items) {
+      if (item.hasOwnProperty('type') && item.type === 'group') {
+        items = [...items, ...item.items];
+      } else {
+        items.push(item);
+      }
     }
 
-    return items.map((value, index, array) => {
+    return items;
+  };
+
+  isSelectedItem = (item) => {
+    let index = 0;
+    for (const _item of this.getItems()) {
+      if (_item === item && index === this.state.selected) {
+        return true;
+      }
+
+      index++;
+    }
+
+    return false;
+  };
+
+  items = () => {
+    return this.state.items.map((item, index, array) => {
+      if (item.hasOwnProperty('type') && item.type === 'group') {
+        return item.items.map((item, index, array) => {
+          return (
+            <div
+              className={
+                this.isSelectedItem(item) ?
+                  "x-select-none x-cursor-pointer x-flex x-text-sm x-px-4 x-py-4 x-block x-m-2 x-rounded-lg x-bg-indigo-600 x-text-white" :
+                  "x-select-none x-cursor-pointer x-flex x-text-sm x-px-4 x-py-4 x-block x-m-2 x-rounded-lg x-bg-white hover:x-text-white x-bg-opacity-20 hover:x-bg-indigo-600"
+              }>
+              <div className="x-w-full">
+                {item.text}
+              </div>
+              <div className="x-text-right x-w-24 text-xs x-opacity-50">
+                Jump to...
+              </div>
+            </div>
+          );
+        });
+      }
+
       return (
         <div
           className={
-            this.state.selected === index ?
+            this.isSelectedItem(item) ?
               "x-select-none x-cursor-pointer x-flex x-text-sm x-px-4 x-py-4 x-block x-m-2 x-rounded-lg x-bg-indigo-600 x-text-white" :
               "x-select-none x-cursor-pointer x-flex x-text-sm x-px-4 x-py-4 x-block x-m-2 x-rounded-lg x-bg-white hover:x-text-white x-bg-opacity-20 hover:x-bg-indigo-600"
           }>
           <div className="x-w-full">
-            Item {value}
+            {item.text}
           </div>
           <div className="x-text-right x-w-24 text-xs x-opacity-50">
             Jump to...
