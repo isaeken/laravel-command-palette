@@ -1,5 +1,6 @@
 import React, {createRef} from 'react';
 import {Backdrop, Modal} from "@mui/material";
+import Group from "./Items/Group";
 
 export default class Container extends React.Component {
   input = createRef();
@@ -156,43 +157,17 @@ export default class Container extends React.Component {
   };
 
   items = () => {
-    return this.state.items.map((item, index, array) => {
-      if (item.hasOwnProperty('type') && item.type === 'group') {
-        return item.items.map((item, index, array) => {
-          return (
-            <div
-              className={
-                this.isSelectedItem(item) ?
-                  "x-select-none x-cursor-pointer x-flex x-text-sm x-px-4 x-py-4 x-block x-m-2 x-rounded-lg x-bg-indigo-600 x-text-white" :
-                  "x-select-none x-cursor-pointer x-flex x-text-sm x-px-4 x-py-4 x-block x-m-2 x-rounded-lg x-bg-white hover:x-text-white x-bg-opacity-20 hover:x-bg-indigo-600"
-              }>
-              <div className="x-w-full">
-                {item.text}
-              </div>
-              <div className="x-text-right x-w-24 text-xs x-opacity-50">
-                Jump to...
-              </div>
-            </div>
-          );
-        });
-      }
-
-      return (
-        <div
-          className={
-            this.isSelectedItem(item) ?
-              "x-select-none x-cursor-pointer x-flex x-text-sm x-px-4 x-py-4 x-block x-m-2 x-rounded-lg x-bg-indigo-600 x-text-white" :
-              "x-select-none x-cursor-pointer x-flex x-text-sm x-px-4 x-py-4 x-block x-m-2 x-rounded-lg x-bg-white hover:x-text-white x-bg-opacity-20 hover:x-bg-indigo-600"
-          }>
-          <div className="x-w-full">
-            {item.text}
-          </div>
-          <div className="x-text-right x-w-24 text-xs x-opacity-50">
-            Jump to...
-          </div>
-        </div>
-      );
-    });
+    return (
+      <div className="x-divide-y">
+        <Group
+          title={null}
+          description={null}
+          items={this.state.items}
+          checkSelectedItem={(object) => {
+            return this.isSelectedItem(object);
+          }}/>
+      </div>
+    );
   };
 
   autoFocus = () => {
