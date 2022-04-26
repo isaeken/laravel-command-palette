@@ -14,6 +14,7 @@ export default class Container extends React.Component {
         enabled: true,
         texts: [],
       },
+      selected: -1,
     };
   }
 
@@ -27,14 +28,27 @@ export default class Container extends React.Component {
         this.close();
         event.preventDefault();
         return true;
+      } else if (event.code === "ArrowDown") {
+        this.setState({selected: this.state.selected + 1});
+        this.autoFocus();
+      } else if (event.code === "ArrowUp") {
+        if (!(this.state.selected < 0)) {
+          this.setState({selected: this.state.selected - 1});
+        } else {
+          this.autoFocus();
+        }
+      } else {
+        console.log(event)
       }
     };
+
+    this.autoFocus();
   }
 
   open = () => {
     this.setState({open: true});
     setTimeout(() => {
-      this.input.current.focus();
+      this.autoFocus();
     }, 150);
   };
 
@@ -51,7 +65,7 @@ export default class Container extends React.Component {
         </div>
       );
     }
-  }
+  };
 
   items = () => {
     let items = [];
@@ -63,7 +77,11 @@ export default class Container extends React.Component {
     return items.map((value, index, array) => {
       return (
         <div
-          className="x-select-none x-cursor-pointer x-flex x-text-sm x-px-4 x-py-4 x-block x-m-2 x-rounded-lg x-bg-white hover:x-text-white x-bg-opacity-20 hover:x-bg-indigo-600">
+          className={
+            this.state.selected === index ?
+              "x-select-none x-cursor-pointer x-flex x-text-sm x-px-4 x-py-4 x-block x-m-2 x-rounded-lg x-bg-indigo-600 x-text-white" :
+              "x-select-none x-cursor-pointer x-flex x-text-sm x-px-4 x-py-4 x-block x-m-2 x-rounded-lg x-bg-white hover:x-text-white x-bg-opacity-20 hover:x-bg-indigo-600"
+          }>
           <div className="x-w-full">
             Item {value}
           </div>
@@ -73,6 +91,12 @@ export default class Container extends React.Component {
         </div>
       );
     });
+  };
+
+  autoFocus = () => {
+    if (this.state.selected === -1 && this.input.current != null) {
+      this.input.current.focus();
+    }
   };
 
   render() {
