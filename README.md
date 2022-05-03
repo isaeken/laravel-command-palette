@@ -10,19 +10,10 @@
         <img src="https://img.shields.io/packagist/v/isaeken/laravel-command-palette" alt="Packagist Version" />
     </a>
     <a href="https://github.com/isaeken/laravel-command-palette">
-        <img src="https://img.shields.io/github/license/isaeken/laravel-command-palette" alt="Github" />
-    </a>
-    <a href="https://github.com/isaeken/laravel-command-palette">
-        <img src="https://img.shields.io/github/issues/isaeken/laravel-command-palette" alt="GitHub issues" />
-    </a>
-    <a href="https://github.com/isaeken/laravel-command-palette">
         <img src="https://img.shields.io/packagist/dt/isaeken/laravel-command-palette" alt="Packagist Downloads" />
     </a>
     <a href="https://github.com/isaeken/laravel-command-palette">
         <img src="https://img.shields.io/github/checks-status/isaeken/laravel-command-palette/master" alt="GitHub branch checks state" />
-    </a>
-    <a href="https://github.com/isaeken/laravel-command-palette">
-        <img src="https://img.shields.io/github/repo-size/isaeken/laravel-command-palette" alt="GitHub repo size" />
     </a>
 </p>
 
