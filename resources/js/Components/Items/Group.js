@@ -1,21 +1,22 @@
 import React from 'react';
-import Item from "./Item";
+import Command from "./Command";
 
 export default class Group extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      title: props.title,
+      id: props?.id,
+      name: props.name,
       description: props.description,
-      items: props.items,
+      commands: props.commands,
     };
   }
 
   static getDerivedStateFromProps(props, state) {
-    if (props.items !== state.items) {
+    if (props.commands !== state.commands) {
       return {
-        items: props.items,
+        commands: props.commands,
       };
     }
 
@@ -25,26 +26,27 @@ export default class Group extends React.Component {
   render() {
     return (
       <div>
-        <div className="x-pt-2 x-pb-1 x-px-4 x-text-sm x-font-semibold">
-          asdasd
+        <div className="x-pt-2 x-pb-1 x-px-4">
+          <div className="x-text-sm x-font-semibold">
+            {this.state.name}
+          </div>
+          {this.state.description != null && this.state.description.length > 0 ? (
+            <div className="x-text-xs">
+              {this.state.description}
+            </div>
+          ) : null}
         </div>
         <div>
-          {this.state.items.map((item) => {
-            if (item.hasOwnProperty('type') && item.type === 'group') {
-              let props = {...this.props};
-              props.items = item.items;
-              return (
-                <div className="x-divide-y">
-                  <Group {...props} />
-                </div>
-              );
-            }
-
-            return <Item
-              selected={this.props.checkSelectedItem(item)}
-              select={this.props.select}
-              item={item}
-            />;
+          {this.state.commands.map((command, index) => {
+            return (
+              <Command
+                key={'command.group.' + this.state.id + '.' + index}
+                command={command}
+                getSelectedCommand={this.props.getSelectedCommand}
+                setSelectedCommand={this.props.setSelectedCommand}
+                executeCommand={this.props.executeCommand}
+              />
+            );
           })}
         </div>
       </div>

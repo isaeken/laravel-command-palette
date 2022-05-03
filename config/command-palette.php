@@ -8,7 +8,10 @@ return [
     ],
 
     'groups' => [
-        'testing' => 'Testing',
+        'testing' => [
+            'name' => 'Testing',
+            'description' => 'This is testing group.',
+        ],
         'utilities' => 'Utilities',
         'account' => 'Account',
     ],

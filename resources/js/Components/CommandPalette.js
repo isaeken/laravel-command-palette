@@ -2,6 +2,8 @@ import React, {createRef} from 'react';
 import {Backdrop, Modal} from "@mui/material";
 import Group from "./Items/Group";
 import ItemCollection from "../ItemCollection";
+import * as api from "../api";
+import Command from "./Items/Command";
 
 export default class CommandPalette extends React.Component {
   input = createRef();
@@ -18,72 +20,23 @@ export default class CommandPalette extends React.Component {
         enabled: true,
         texts: [],
       },
+      data: {
+        commands: [],
+        grouped: {},
+        groups: {},
+      },
       selected: -1,
     };
-
-    this.items.setItems([
-      {
-        text: 'test1',
-        action: 'https://google.com'
-      },
-      {
-        type: 'group',
-        items: [
-          {
-            text: 'test2',
-            action: 'https://google.com'
-          },
-          {
-            text: 'test3',
-            action: 'https://google.com'
-          },
-          {
-            text: 'test4',
-            action: 'https://google.com'
-          },
-          {
-            text: 'test5',
-            action: 'https://google.com'
-          },
-        ],
-      },
-      {
-        text: 'test6',
-        action: 'https://google.com'
-      },
-      {
-        text: 'test7',
-        action: 'https://google.com'
-      },
-      {
-        type: 'group',
-        items: [
-          {
-            text: 'test8',
-            action: 'https://google.com'
-          },
-          {
-            text: 'test9',
-            action: 'https://google.com'
-          },
-          {
-            text: 'test10',
-            action: 'https://google.com'
-          },
-          {
-            text: 'test11',
-            action: 'https://google.com'
-          },
-        ],
-      },
-      {
-        text: 'test12',
-        action: 'https://google.com'
-      },
-    ]);
   }
 
   componentDidMount() {
+    api.commands().then((commands) => {
+      this.setState({
+        data: commands,
+        loading: false,
+      });
+    });
+
     document.onkeydown = (event) => {
       if (event.ctrlKey && event.code === "KeyK") {
         this.open();
@@ -93,18 +46,31 @@ export default class CommandPalette extends React.Component {
         this.close();
         event.preventDefault();
         return true;
+      } else if (event.code === "Enter") {
+        this.executeCommand();
       } else if (event.code === "ArrowDown") {
-        if (!(this.state.selected > this.items.getItems().length - 2)) {
-          this.setState({selected: this.state.selected + 1});
+        const current = this.getSelectedCommand();
+        let nextCommand = current != null ? this.getNextCommand(current) : null;
+
+        if (current !== null && nextCommand !== null) {
+          this.setSelectedCommand(nextCommand);
+          this.input.current.blur();
+        } else if (current == null) {
+          this.setSelectedCommand(this.state.data.commands[0]);
+          this.input.current.blur();
         }
       } else if (event.code === "ArrowUp") {
-        if (!(this.state.selected < 0)) {
-          this.setState({selected: this.state.selected - 1});
+        const current = this.getSelectedCommand();
+        let previousCommand = current != null ? this.getPreviousCommand(current) : null;
+
+        if (current !== null && previousCommand !== null) {
+          this.setSelectedCommand(previousCommand);
         } else {
-          this.autoFocus();
+          this.setState({selected: this.state.selected - 1});
+          this.input.current.focus();
         }
       } else {
-        console.log(event)
+        // ...
       }
     };
 
@@ -122,12 +88,53 @@ export default class CommandPalette extends React.Component {
     this.setState({open: false});
   };
 
-  getSelectedItem = () => {
-    return this.items.getItems()[this.items.getItems().findIndex((item, index) => index === this.state.selected)];
+  getSelectedCommand = () => {
+    for (const item of this.state.data.commands) {
+      if (item.id === this.state.selected) {
+        return item;
+      }
+    }
+
+    return null;
   };
 
-  isSelectedItem = (item) => {
-    return item === this.getSelectedItem();
+  setSelectedCommand = (command) => {
+    this.setState({selected: command.id});
+  };
+
+  getPreviousCommand = (command) => {
+    const currentIndex = this.state.data.commands.findIndex((object) => object?.id === command?.id);
+    const commands = this.state.data.commands;
+
+    if (commands.hasOwnProperty(currentIndex - 1)) {
+      return commands[currentIndex - 1];
+    }
+
+    return null;
+  };
+
+  getNextCommand = (command) => {
+    const currentIndex = this.state.data.commands.findIndex((object) => object?.id === command?.id);
+    const commands = this.state.data.commands;
+
+    if (commands.hasOwnProperty(currentIndex + 1)) {
+      return commands[currentIndex + 1];
+    }
+
+    return null;
+  };
+
+  executeCommand = (command) => {
+    if (command == null) {
+      const current = this.getSelectedCommand();
+      if (current != null) {
+        this.executeCommand(current);
+      }
+
+      return;
+    }
+
+    console.log('executed', command)
   };
 
   renderTips = () => {
@@ -142,22 +149,40 @@ export default class CommandPalette extends React.Component {
   };
 
   renderItems = () => {
-    return (
-      <div className="x-divide-y">
-        <Group
-          title={null}
-          description={null}
-          items={this.items.getItems(true, this.state.value)}
-          checkSelectedItem={(object) => {
-            return this.isSelectedItem(object);
-          }}
-          select={(object) => {
-            let index = this.items.getItems().findIndex((item) => item === object);
-            this.setState({selected: index});
-          }}
-        />
-      </div>
-    );
+    return Object.keys(this.state.data.grouped).map((groupKey) => {
+      const commands = this.state.data.grouped[groupKey];
+
+      if (this.state.data.groups.hasOwnProperty(groupKey)) {
+        const group = this.state.data.groups[groupKey];
+        const groupName = group instanceof Object ? group.name : group;
+        const groupDescription = group instanceof Object ? group?.description : null;
+
+        return (
+          <Group
+            key={'command.group.' + groupKey}
+            id={groupKey}
+            name={groupName}
+            description={groupDescription}
+            commands={commands}
+            getSelectedCommand={this.getSelectedCommand}
+            setSelectedCommand={this.setSelectedCommand}
+            executeCommand={this.executeCommand}
+          />
+        );
+      }
+
+      return commands.map((command, index) => {
+        return (
+          <Command
+            key={'command.without.group.' + index}
+            command={command}
+            getSelectedCommand={this.getSelectedCommand}
+            setSelectedCommand={this.setSelectedCommand}
+            executeCommand={this.executeCommand}
+          />
+        );
+      });
+    });
   };
 
   autoFocus = () => {
@@ -191,7 +216,9 @@ export default class CommandPalette extends React.Component {
               className="x-font-roboto x-text-xl x-box-border x-py-4 x-px-4 x-block x-outline-none x-border-0 x-border-b x-border-gray-300 x-rounded-t-xl x-bg-transparent x-w-full"/>
             <div className="x-w-full x-max-h-96 x-overflow-y-auto">
               {this.renderTips()}
-              {this.renderItems()}
+              <div className="x-divide-y">
+                {this.renderItems()}
+              </div>
             </div>
           </div>
         </Modal>

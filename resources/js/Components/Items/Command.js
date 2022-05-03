@@ -1,13 +1,12 @@
 import React from 'react';
 import DynamicIcon from "../DynamicIcon";
 
-export default class Item extends React.Component {
+export default class Command extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      selected: props.selected ?? false,
-      item: props.item,
+      command: props.command,
     };
   }
 
@@ -18,25 +17,38 @@ export default class Item extends React.Component {
       };
     }
 
-    if (props.item !== state.item) {
+    if (props.command !== state.command) {
       return {
-        item: props.item,
+        command: props.command,
       };
     }
 
     return null;
   }
 
+  checkIsSelected = () => {
+    if (this.props.getSelectedCommand instanceof Function) {
+      return this.props.getSelectedCommand()?.id === this.state.command.id;
+    }
+
+    return false;
+  };
+
+  selectCurrentCommand = () => {
+    if (this.props.setSelectedCommand instanceof Function) {
+      this.props.setSelectedCommand(this.state.command);
+    }
+  };
+
   render() {
     return (
       <div
-        onMouseEnter={() => {
-          if (this.props.select instanceof Function) {
-            this.props.select(this.state.item);
-          }
+        onMouseEnter={this.selectCurrentCommand}
+        onClick={() => {
+          this.props.executeCommand(this.state.command);
         }}
         className={
-          this.state.selected ?
+          this.checkIsSelected() ?
             "x-select-none x-cursor-pointer x-text-sm x-px-4 x-py-4 x-block x-m-2 x-rounded-lg x-bg-indigo-600 x-text-white" :
             "x-select-none x-cursor-pointer x-text-sm x-px-4 x-py-4 x-block x-m-2 x-rounded-lg x-bg-white x-bg-opacity-20"
         }>
@@ -45,7 +57,15 @@ export default class Item extends React.Component {
             <DynamicIcon iconName={"settings"}/>
           </div>
           <div className="x-w-full">
-            {this.state.item.text}
+            <div className="x-font-semibold">
+              {this.state.command.name}
+            </div>
+
+            {this.state.description != null && this.state.description.length > 0 ? (
+              <div className="x-text-xs">
+                {this.state.command.description}
+              </div>
+            ) : null}
           </div>
           <div className="x-text-right x-w-24 text-xs x-opacity-50">
             Jump to...
