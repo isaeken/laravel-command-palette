@@ -19,3 +19,5 @@ export function search(items, query) {
 
   return items;
 }
+
+export const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));

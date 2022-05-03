@@ -4,6 +4,7 @@ import Group from "./Items/Group";
 import ItemCollection from "../ItemCollection";
 import * as api from "../api";
 import Command from "./Items/Command";
+import {CommandExecution} from "../CommandExecution";
 
 export default class CommandPalette extends React.Component {
   input = createRef();
@@ -134,7 +135,8 @@ export default class CommandPalette extends React.Component {
       return;
     }
 
-    console.log('executed', command)
+    const execution = new CommandExecution(command);
+    execution.run();
   };
 
   renderTips = () => {

@@ -17,7 +17,11 @@ class Logout extends Command
      */
     public function execute(): void
     {
+        $this->alert('sa');
+        $this->delay(5000);
+        $this->log('test');
+        $this->delay(1000);
+        $this->log('redirecting..');
         $this->redirectToRoute('home', ['test' => 'qwe']);
-        $this->abort(404);
     }
 }

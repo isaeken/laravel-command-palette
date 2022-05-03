@@ -17,17 +17,6 @@ trait HasCommandPaletteResponses
         $this->redirect(route($name, $parameters, $absolute));
     }
 
-    public function abort(int|null $code = null, string|null $message = null): void
-    {
-        getCommandPalette()->responses[] = [
-            'type' => 'aborted',
-            'data' => [
-                'code' => $code,
-                'message' => $message,
-            ],
-        ];
-    }
-
     public function alert(string $message): void
     {
         getCommandPalette()->responses[] = [
@@ -42,5 +31,18 @@ trait HasCommandPaletteResponses
             'type' => 'log',
             'data' => $message,
         ];
+    }
+
+    public function sleep(int $ms = 0): void
+    {
+        getCommandPalette()->responses[] = [
+            'type' => 'delay',
+            'data' => $ms,
+        ];
+    }
+
+    public function delay(int $ms = 0): void
+    {
+        $this->sleep($ms);
     }
 }
