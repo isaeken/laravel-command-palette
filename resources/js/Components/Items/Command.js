@@ -1,5 +1,6 @@
 import React from 'react';
 import DynamicIcon from "../DynamicIcon";
+import {CircularProgress} from "@mui/material";
 
 export default class Command extends React.Component {
   constructor(props) {
@@ -7,6 +8,8 @@ export default class Command extends React.Component {
 
     this.state = {
       command: props.command,
+      loading: props.loading,
+      disabled: props.disabled,
     };
   }
 
@@ -20,6 +23,18 @@ export default class Command extends React.Component {
     if (props.command !== state.command) {
       return {
         command: props.command,
+      };
+    }
+
+    if (props.loading !== state.loading) {
+      return {
+        loading: props.loading,
+      };
+    }
+
+    if (props.disabled !== state.disabled) {
+      return {
+        disabled: props.disabled,
       };
     }
 
@@ -40,6 +55,22 @@ export default class Command extends React.Component {
     }
   };
 
+  renderIcon = () => {
+    if (this.state.loading) {
+      return (
+        <div className="x-flex x-items-center">
+          <CircularProgress size={22}/>
+        </div>
+      );
+    }
+
+    return this.state.command.icon != null ? (
+      <div className="x-mr-2">
+        <DynamicIcon iconName={this.state.command.icon}/>
+      </div>
+    ) : null;
+  };
+
   render() {
     return (
       <div
@@ -53,11 +84,7 @@ export default class Command extends React.Component {
             "x-select-none x-cursor-pointer x-text-sm x-px-4 x-py-4 x-block x-m-2 x-rounded-lg x-bg-white x-bg-opacity-20"
         }>
         <div className="x-flex x-items-center x-space-x-2">
-          {this.state.command.icon != null ? (
-            <div className="x-mr-2">
-              <DynamicIcon iconName={this.state.command.icon}/>
-            </div>
-          ) : null}
+          {this.renderIcon()}
           <div className="x-w-full">
             <div className="x-font-semibold">
               {this.state.command.name}

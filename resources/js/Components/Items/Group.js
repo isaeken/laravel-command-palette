@@ -10,6 +10,8 @@ export default class Group extends React.Component {
       name: props.name,
       description: props.description,
       commands: props.commands,
+      loading: props.loading ?? false,
+      disabled: props.disabled ?? false,
     };
   }
 
@@ -17,6 +19,18 @@ export default class Group extends React.Component {
     if (props.commands !== state.commands) {
       return {
         commands: props.commands,
+      };
+    }
+
+    if (props.loading !== state.loading) {
+      return {
+        loading: props.loading,
+      };
+    }
+
+    if (props.disabled !== state.disabled) {
+      return {
+        disabled: props.disabled,
       };
     }
 
@@ -42,6 +56,8 @@ export default class Group extends React.Component {
               <Command
                 key={'command.group.' + this.state.id + '.' + index}
                 command={command}
+                loading={this.state.loading}
+                disabled={this.state.disabled}
                 getSelectedCommand={this.props.getSelectedCommand}
                 setSelectedCommand={this.props.setSelectedCommand}
                 executeCommand={this.props.executeCommand}

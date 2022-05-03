@@ -5,6 +5,7 @@ import ItemCollection from "../ItemCollection";
 import * as api from "../api";
 import Command from "./Items/Command";
 import {CommandExecution} from "../CommandExecution";
+import {search} from "../helpers";
 
 export default class CommandPalette extends React.Component {
   input = createRef();
@@ -17,10 +18,7 @@ export default class CommandPalette extends React.Component {
       open: false,
       placeholder: props.placeholder ?? 'Search or jump to...',
       value: '',
-      tips: {
-        enabled: true,
-        texts: [],
-      },
+      tips: [],
       data: {
         commands: [],
         grouped: {},
@@ -37,6 +35,12 @@ export default class CommandPalette extends React.Component {
       this.setState({
         data: commands,
         loading: false,
+      });
+    });
+
+    api.data().then((data) => {
+      this.setState({
+        tips: data.tips,
       });
     });
 
@@ -142,11 +146,13 @@ export default class CommandPalette extends React.Component {
   };
 
   renderTips = () => {
-    if (this.state.tips.enabled) {
+    if (this.state.tips.length > 0) {
       return (
         <div className="x-w-full x-pt-4 x-pb-2 x-px-3 x-text-sm x-tracking-wide x-box-border">
           <b className="x-mr-1">Tip:</b>
-          <span>just testing...</span>
+          <span>
+            {this.state.tips[Math.floor(Math.random() * this.state.tips.length)]}
+          </span>
         </div>
       );
     }
@@ -154,7 +160,7 @@ export default class CommandPalette extends React.Component {
 
   renderItems = () => {
     return Object.keys(this.state.data.grouped).map((groupKey) => {
-      const commands = this.state.data.grouped[groupKey];
+      const commands = search(this.state.data.grouped[groupKey], this.state.value);
 
       if (this.state.data.groups.hasOwnProperty(groupKey)) {
         const group = this.state.data.groups[groupKey];
@@ -168,6 +174,8 @@ export default class CommandPalette extends React.Component {
             name={groupName}
             description={groupDescription}
             commands={commands}
+            loading={this.state.loading}
+            disabled={this.state.disabled}
             getSelectedCommand={this.getSelectedCommand}
             setSelectedCommand={this.setSelectedCommand}
             executeCommand={this.executeCommand}
@@ -180,6 +188,8 @@ export default class CommandPalette extends React.Component {
           <Command
             key={'command.without.group.' + index}
             command={command}
+            loading={this.state.loading}
+            disabled={this.state.disabled}
             getSelectedCommand={this.getSelectedCommand}
             setSelectedCommand={this.setSelectedCommand}
             executeCommand={this.executeCommand}
