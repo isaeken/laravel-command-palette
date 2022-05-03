@@ -5,15 +5,15 @@ namespace IsaEken\LaravelCommandPalette\CommandPalette\Commands;
 use IsaEken\LaravelCommandPalette\Command;
 use IsaEken\LaravelCommandPalette\Enums\Icon;
 
-class Logout extends Command
+class ChangePassword extends Command
 {
-    protected string $name = 'Logout';
+    protected string $name = 'Change password';
 
-    protected string|null $description = 'Logout of your account.';
+    protected string|null $description = 'Change your password.';
 
-    protected Icon|string|null $icon = Icon::MaterialLogout;
+    protected Icon|string|null $icon = Icon::MaterialLock;
 
-    protected string|int|null $groupId = null;
+    protected string|int|null $groupId = 'account';
 
     /**
      * @inheritDoc

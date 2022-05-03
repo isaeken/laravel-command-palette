@@ -1,10 +1,14 @@
 <?php
 
-use IsaEken\LaravelCommandPalette\CommandPalette\Commands\Logout;
+use IsaEken\LaravelCommandPalette\CommandPalette\Commands;
 
 return [
     'commands' => [
-        Logout::class,
+        Commands\CacheClear::class,
+        Commands\ChangePassword::class,
+        Commands\Logout::class,
+        Commands\Profile::class,
+        Commands\Settings::class,
     ],
 
     'groups' => [
