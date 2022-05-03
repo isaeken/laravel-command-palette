@@ -27,6 +27,8 @@ export default class CommandPalette extends React.Component {
         groups: {},
       },
       selected: -1,
+      loading: true,
+      disabled: false,
     };
   }
 

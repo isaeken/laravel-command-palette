@@ -3,6 +3,7 @@
 namespace IsaEken\LaravelCommandPalette;
 
 use Illuminate\Support\Collection;
+use IsaEken\LaravelCommandPalette\Enums\Icon;
 
 class CommandPalette
 {
@@ -72,7 +73,7 @@ class CommandPalette
      */
     public function registerCommandUnless(bool $condition, string|Contracts\Command $command): self
     {
-        if (! $command) {
+        if (!$command) {
             $this->registerCommand($command);
         }
 
@@ -104,7 +105,7 @@ class CommandPalette
         return $this
             ->commands
             ->filter(function (Contracts\Command $command) {
-                if (! method_exists($command, 'shouldBeShown')) {
+                if (!method_exists($command, 'shouldBeShown')) {
                     return true;
                 }
 
@@ -117,7 +118,10 @@ class CommandPalette
                     'groupId' => $command->getGroupId(),
                     'name' => $command->getName(),
                     'description' => $command->getDescription(),
-                    'icon' => $command->getIcon(),
+                    'icon' =>
+                        $command->getIcon() instanceof Icon
+                            ? $command->getIcon()->toIconName()
+                            : $command->getIcon(),
                 ];
             })
             ->collect();

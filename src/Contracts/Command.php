@@ -2,6 +2,8 @@
 
 namespace IsaEken\LaravelCommandPalette\Contracts;
 
+use IsaEken\LaravelCommandPalette\Enums\Icon;
+
 interface Command
 {
     /**
@@ -28,9 +30,9 @@ interface Command
     /**
      * Get icon name of the command.
      *
-     * @return string|null
+     * @return string|Icon|null
      */
-    public function getIcon(): string|null;
+    public function getIcon(): string|Icon|null;
 
     /**
      * Get group id of the command.

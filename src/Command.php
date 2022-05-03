@@ -2,6 +2,7 @@
 
 namespace IsaEken\LaravelCommandPalette;
 
+use IsaEken\LaravelCommandPalette\Enums\Icon;
 use IsaEken\LaravelCommandPalette\Traits\HasCommandPaletteResponses;
 
 abstract class Command implements Contracts\Command
@@ -12,7 +13,7 @@ abstract class Command implements Contracts\Command
 
     protected string|null $description = null;
 
-    protected string|null $icon = null;
+    protected string|Icon|null $icon = null;
 
     protected string|int|null $groupId = null;
 
@@ -43,7 +44,7 @@ abstract class Command implements Contracts\Command
     /**
      * @inheritdoc
      */
-    public function getIcon(): string|null
+    public function getIcon(): string|Icon|null
     {
         return $this->icon;
     }

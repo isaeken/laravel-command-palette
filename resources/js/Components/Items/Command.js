@@ -53,9 +53,11 @@ export default class Command extends React.Component {
             "x-select-none x-cursor-pointer x-text-sm x-px-4 x-py-4 x-block x-m-2 x-rounded-lg x-bg-white x-bg-opacity-20"
         }>
         <div className="x-flex x-items-center x-space-x-2">
-          <div className="x-mr-2">
-            <DynamicIcon iconName={"settings"}/>
-          </div>
+          {this.state.command.icon != null ? (
+            <div className="x-mr-2">
+              <DynamicIcon iconName={this.state.command.icon}/>
+            </div>
+          ) : null}
           <div className="x-w-full">
             <div className="x-font-semibold">
               {this.state.command.name}

@@ -15,4 +15,11 @@ return [
         'utilities' => 'Utilities',
         'account' => 'Account',
     ],
+
+    'tips' => [
+        'Go to your accessibility settings to change your keyboard shortcuts',
+        'Type ``#`` to search tags',
+        'Type ``>`` to activate command mode',
+        'Type ``@`` to search people',
+    ],
 ];
