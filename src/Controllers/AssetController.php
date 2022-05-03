@@ -13,6 +13,7 @@ class AssetController extends Controller
         $filename = __DIR__.'/../../dist/css/app.css';
         abort_unless(file_exists($filename), 404);
         $content = file_get_contents($filename);
+
         return $this->cacheResponse(new Response($content, 200, ['Content-Type' => 'text/css']));
     }
 
@@ -21,6 +22,7 @@ class AssetController extends Controller
         $filename = __DIR__.'/../../dist/js/app.js';
         abort_unless(file_exists($filename), 404);
         $content = file_get_contents($filename);
+
         return $this->cacheResponse(new Response($content, 200, ['Content-Type' => 'text/javascript']));
     }
 

@@ -8,7 +8,6 @@ use Symfony\Component\HttpFoundation\Request;
 
 class InjectCommandPalette
 {
-
     /**
      * Handle an incoming request.
      *
@@ -21,6 +20,7 @@ class InjectCommandPalette
         /** @var Response $response */
         $response = $next($request);
         $this->modifyResponse($request, $response);
+
         return $response;
     }
 
@@ -37,6 +37,7 @@ class InjectCommandPalette
 
         // Check if the request wants Json
         $acceptable = $request->getAcceptableContentTypes();
+
         return (isset($acceptable[0]) && $acceptable[0] == 'application/json');
     }
 
@@ -52,7 +53,7 @@ class InjectCommandPalette
             $response->isRedirection() ||
             $this->isJsonRequest($request) ||
             $response->headers->has('Content-Type') &&
-            (!str_contains($response->headers->get('Content-Type'), 'html')) ||
+            (! str_contains($response->headers->get('Content-Type'), 'html')) ||
             $request->getRequestFormat() !== 'html' ||
             $response->getContent() === false
         ) {
