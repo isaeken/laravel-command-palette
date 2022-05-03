@@ -1,6 +1,6 @@
-# Command Palette
+<p align="center">
 
-> wip do not use for production!
+![Laravel Command Palette](art/screenshot.png)
 
 ![Packagist PHP Version Support](https://img.shields.io/packagist/php-v/isaeken/laravel-command-palette)
 ![Packagist Version](https://img.shields.io/packagist/v/isaeken/laravel-command-palette)
@@ -10,4 +10,18 @@
 ![GitHub branch checks state](https://img.shields.io/github/checks-status/isaeken/laravel-command-palette/master)
 ![GitHub repo size](https://img.shields.io/github/repo-size/isaeken/laravel-command-palette)
 
-![Laravel Command Palette](art/screenshot.png)
+## About Laravel Command Palette
+
+Laravel Command Palette is a package that provides Spotlight like functionality to your Laravel application.
+
+</p>
+
+> The project is under in development. Do not use for production!
+
+## Installation
+
+...
+
+## License
+
+Laravel Command Palette is open-sourced software licensed under the [MIT license](LICENSE.md)
