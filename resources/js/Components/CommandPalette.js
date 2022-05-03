@@ -3,7 +3,7 @@ import {Backdrop, Modal} from "@mui/material";
 import Group from "./Items/Group";
 import ItemCollection from "../ItemCollection";
 
-export default class Container extends React.Component {
+export default class CommandPalette extends React.Component {
   input = createRef();
   items = new ItemCollection();
 

@@ -1,9 +1,9 @@
 import ReactDOM from 'react-dom';
-import Container from "./Components/Container";
+import CommandPalette from "./Components/CommandPalette";
 
 document.addEventListener("DOMContentLoaded", () => {
   ReactDOM.render(
-    <Container/>,
+    <CommandPalette/>,
     document.getElementById("laravel-command-palette")
   );
 });
