@@ -3,13 +3,19 @@
 namespace IsaEken\LaravelCommandPalette;
 
 use Illuminate\Support\Collection;
-use IsaEken\LaravelCommandPalette\Enums\Icon;
+use IsaEken\LaravelCommandPalette\Abstracts\ResourceCommand;
+use IsaEken\LaravelCommandPalette\Contracts;
+use IsaEken\LaravelCommandPalette\Contracts\Command;
 
 class CommandPalette
 {
     public Collection $commands;
 
     public array $responses = [];
+
+    public static array $commandIdCache = [];
+
+    private Collection|null $commandCache = null;
 
     public function __construct()
     {
@@ -36,16 +42,16 @@ class CommandPalette
     }
 
     /**
-     * @param  string|Contracts\Command  $command
+     * @param  string|Command  $command
      * @return $this
      */
-    public function registerCommand(string|Contracts\Command $command): self
+    public function registerCommand(string|Command $command): self
     {
-        if ($command instanceof Contracts\Command) {
-            $command = $command::class;
-        }
+        $command = $command instanceof Command
+            ? $command
+            : new $command();
 
-        tap(new $command, function (Contracts\Command $command) {
+        tap($command, function (Command $command) {
             $this->commands[] = $command;
         });
 
@@ -54,12 +60,12 @@ class CommandPalette
 
     /**
      * @param  bool  $condition
-     * @param  string|\IsaEken\LaravelCommandPalette\Contracts\Command  $command
+     * @param  string|Command  $command
      * @return $this
      */
-    public function registerCommandWhen(bool $condition, string|Contracts\Command $command): self
+    public function registerCommandWhen(bool $condition, string|Command $command): self
     {
-        if ($command) {
+        if ($condition) {
             $this->registerCommand($command);
         }
 
@@ -68,12 +74,12 @@ class CommandPalette
 
     /**
      * @param  bool  $condition
-     * @param  string|\IsaEken\LaravelCommandPalette\Contracts\Command  $command
+     * @param  string|Command  $command
      * @return $this
      */
-    public function registerCommandUnless(bool $condition, string|Contracts\Command $command): self
+    public function registerCommandUnless(bool $condition, string|Command $command): self
     {
-        if (!$command) {
+        if (!$condition) {
             $this->registerCommand($command);
         }
 
@@ -82,48 +88,53 @@ class CommandPalette
 
     /**
      * @param  string  $commandId
-     * @return Contracts\Command|null
+     * @return Command|null
      */
-    public function getCommandById(string $commandId): Contracts\Command|null
+    public function getCommandById(string $commandId): Command|null
     {
-        return $this->commands->first(function (Contracts\Command $command) use ($commandId) {
+        return $this->getCommands()->first(function (Command $command) use ($commandId) {
             return $command->getId() === $commandId;
         });
     }
 
     /**
      * @param  string  $commandId
+     * @param  array  $arguments
      * @return void
      */
-    public function execute(string $commandId): void
+    public function execute(string $commandId, array $arguments): void
     {
-        $this->getCommandById($commandId)?->execute();
+        $this->getCommandById($commandId)?->execute($arguments);
     }
 
     public function getCommands(): Collection
     {
-        return $this
+        if ($this->commandCache != null) {
+            return $this->commandCache;
+        }
+
+        $commands = $this
             ->commands
-            ->filter(function (Contracts\Command $command) {
+            ->filter(function (Command $command) {
                 if (!method_exists($command, 'shouldBeShown')) {
                     return true;
                 }
 
                 return app()->call([$command, 'shouldBeShown']);
             })
-            ->values()
-            ->map(function (Contracts\Command $command) {
-                return [
-                    'id' => $command->getId(),
-                    'groupId' => $command->getGroupId(),
-                    'name' => $command->getName(),
-                    'description' => $command->getDescription(),
-                    'icon' =>
-                        $command->getIcon() instanceof Icon
-                            ? $command->getIcon()->toIconName()
-                            : $command->getIcon(),
-                ];
-            })
-            ->collect();
+            ->values();
+
+        /** @var Contracts\Resource $resource */
+        foreach (config('command-palette.resources', []) as $resource) {
+            $commands = $commands->merge(
+                collect($resource::get())
+                    ->map(function (ResourceCommand $command, $index) {
+                        $command->index = $index;
+                        return $command;
+                    })
+            );
+        }
+
+        return $this->commandCache = $commands;
     }
 }

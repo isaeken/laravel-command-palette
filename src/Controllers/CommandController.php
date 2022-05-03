@@ -5,6 +5,9 @@ namespace IsaEken\LaravelCommandPalette\Controllers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use IsaEken\LaravelCommandPalette\Contracts\Command;
+use IsaEken\LaravelCommandPalette\Contracts\Resource;
+use IsaEken\LaravelCommandPalette\Enums\Icon;
 use function response;
 
 class CommandController extends Controller
@@ -12,7 +15,19 @@ class CommandController extends Controller
     public function index(Request $request): JsonResponse
     {
         $query = $request->input('query');
-        $commands = getCommandPalette()->getCommands();
+        $commands = getCommandPalette()->getCommands()->map(function (Command $command) {
+            return [
+                'id' => $command->getId(),
+                'groupId' => $command->getGroupId(),
+                'name' => $command->getName(),
+                'description' => $command->getDescription(),
+                'arguments' => $command instanceof Resource ? ['id' => $command->getItemId()] : null,
+                'icon' =>
+                    $command->getIcon() instanceof Icon
+                        ? $command->getIcon()->toIconName()
+                        : $command->getIcon(),
+            ];
+        });
 
         if (strlen($query) > 0) {
             $commands = $commands->filter(function ($item) use ($query) {
@@ -27,9 +42,9 @@ class CommandController extends Controller
         ]);
     }
 
-    public function execute(string $id): JsonResponse
+    public function execute(Request $request, string $id): JsonResponse
     {
-        getCommandPalette()->execute($id);
+        getCommandPalette()->execute($id, $request->all());
 
         return response()->json(getCommandPalette()->responses);
     }

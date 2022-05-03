@@ -42,16 +42,9 @@ interface Command
     public function getGroupId(): string|int|null;
 
     /**
-     * Check command is show.
-     *
-     * @return bool
-     */
-    public function shouldBeShown(): bool;
-
-    /**
      * Execute command.
      *
      * @return void
      */
-    public function execute(): void;
+    public function execute(...$arguments): void;
 }

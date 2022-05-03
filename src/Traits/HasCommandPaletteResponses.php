@@ -25,7 +25,7 @@ trait HasCommandPaletteResponses
         ];
     }
 
-    public function log(string $message): void
+    public function log(mixed $message): void
     {
         getCommandPalette()->responses[] = [
             'type' => 'log',

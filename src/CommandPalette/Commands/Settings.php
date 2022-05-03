@@ -2,7 +2,7 @@
 
 namespace IsaEken\LaravelCommandPalette\CommandPalette\Commands;
 
-use IsaEken\LaravelCommandPalette\Command;
+use IsaEken\LaravelCommandPalette\Abstracts\Command;
 use IsaEken\LaravelCommandPalette\Enums\Icon;
 
 class Settings extends Command
@@ -18,7 +18,7 @@ class Settings extends Command
     /**
      * @inheritDoc
      */
-    public function execute(): void
+    public function execute(...$arguments): void
     {
         $this->redirectToRoute('home');
     }

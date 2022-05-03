@@ -57,8 +57,8 @@ export class CommandExecution {
     }
   };
 
-  run() {
-    api.execute(this.command.id).then(async (executions) => {
+  run(args) {
+    api.execute(this.command.id, args).then(async (executions) => {
       for await (const execution of executions) {
         await this.execute(execution.type, execution.data);
       }

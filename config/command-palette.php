@@ -1,6 +1,7 @@
 <?php
 
 use IsaEken\LaravelCommandPalette\CommandPalette\Commands;
+use IsaEken\LaravelCommandPalette\CommandPalette\Resources;
 
 return [
     'commands' => [
@@ -11,6 +12,10 @@ return [
         Commands\Settings::class,
     ],
 
+    'resources' => [
+        Resources\UserProfile::class,
+    ],
+
     'groups' => [
         'testing' => [
             'name' => 'Testing',
@@ -18,6 +23,7 @@ return [
         ],
         'utilities' => 'Utilities',
         'account' => 'Account',
+        'users' => 'Users',
     ],
 
     'tips' => [

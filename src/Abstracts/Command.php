@@ -1,7 +1,9 @@
 <?php
 
-namespace IsaEken\LaravelCommandPalette;
+namespace IsaEken\LaravelCommandPalette\Abstracts;
 
+use IsaEken\LaravelCommandPalette\CommandPalette;
+use IsaEken\LaravelCommandPalette\Contracts;
 use IsaEken\LaravelCommandPalette\Enums\Icon;
 use IsaEken\LaravelCommandPalette\Traits\HasCommandPaletteResponses;
 
@@ -22,7 +24,11 @@ abstract class Command implements Contracts\Command
      */
     public function getId(): string
     {
-        return md5(static::class);
+        if (array_key_exists(static::class, CommandPalette::$commandIdCache)) {
+            return CommandPalette::$commandIdCache[static::class];
+        }
+
+        return CommandPalette::$commandIdCache[static::class] = md5(static::class);
     }
 
     /**

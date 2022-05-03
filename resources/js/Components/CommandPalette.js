@@ -131,18 +131,18 @@ export default class CommandPalette extends React.Component {
     return null;
   };
 
-  executeCommand = (command) => {
+  executeCommand = (command, args = null) => {
     if (command == null) {
       const current = this.getSelectedCommand();
       if (current != null) {
-        this.executeCommand(current);
+        this.executeCommand(current, current['arguments']);
       }
 
       return;
     }
 
     const execution = new CommandExecution(command);
-    execution.run();
+    execution.run(args);
   };
 
   renderTips = () => {
@@ -228,7 +228,9 @@ export default class CommandPalette extends React.Component {
                 });
               }}
               className="x-font-roboto x-text-xl x-box-border x-py-4 x-px-4 x-block x-outline-none x-border-0 x-border-b x-border-gray-300 x-rounded-t-xl x-bg-transparent x-w-full"/>
-            <div className="x-w-full x-max-h-96 x-overflow-y-auto">
+            <div className="x-w-full x-overflow-y-auto" style={{
+              maxHeight: 600,
+            }}>
               {this.renderTips()}
               <div className="x-divide-y">
                 {this.renderItems()}

@@ -1,6 +1,7 @@
 import React from 'react';
 import DynamicIcon from "../DynamicIcon";
 import {CircularProgress} from "@mui/material";
+import {isUrl} from "../../helpers";
 
 export default class Command extends React.Component {
   constructor(props) {
@@ -66,7 +67,13 @@ export default class Command extends React.Component {
 
     return this.state.command.icon != null ? (
       <div className="x-mr-2">
-        <DynamicIcon iconName={this.state.command.icon}/>
+        {isUrl(this.state.command.icon) ? (
+          <div className="x-flex x-items-center">
+            <img className="x-w-6 x-h-6 x-rounded" src={this.state.command.icon} alt={this.state.command.icon}/>
+          </div>
+        ) : (
+          <DynamicIcon iconName={this.state.command.icon}/>
+        )}
       </div>
     ) : null;
   };
@@ -76,7 +83,7 @@ export default class Command extends React.Component {
       <div
         onMouseEnter={this.selectCurrentCommand}
         onClick={() => {
-          this.props.executeCommand(this.state.command);
+          this.props.executeCommand(this.state.command, this.state.command?.arguments);
         }}
         className={
           this.checkIsSelected() ?

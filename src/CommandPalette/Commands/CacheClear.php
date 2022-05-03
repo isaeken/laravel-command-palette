@@ -3,7 +3,7 @@
 namespace IsaEken\LaravelCommandPalette\CommandPalette\Commands;
 
 use Illuminate\Support\Facades\Artisan;
-use IsaEken\LaravelCommandPalette\Command;
+use IsaEken\LaravelCommandPalette\Abstracts\Command;
 use IsaEken\LaravelCommandPalette\Enums\Icon;
 
 class CacheClear extends Command
@@ -19,7 +19,7 @@ class CacheClear extends Command
     /**
      * @inheritDoc
      */
-    public function execute(): void
+    public function execute(...$arguments): void
     {
         Artisan::call('cache:clear');
         $this->alert('Cache cleared!');
