@@ -4,7 +4,6 @@ namespace IsaEken\LaravelCommandPalette;
 
 use Illuminate\Support\Collection;
 use IsaEken\LaravelCommandPalette\Abstracts\ResourceCommand;
-use IsaEken\LaravelCommandPalette\Contracts;
 use IsaEken\LaravelCommandPalette\Contracts\Command;
 
 class CommandPalette
@@ -79,7 +78,7 @@ class CommandPalette
      */
     public function registerCommandUnless(bool $condition, string|Command $command): self
     {
-        if (!$condition) {
+        if (! $condition) {
             $this->registerCommand($command);
         }
 
@@ -116,7 +115,7 @@ class CommandPalette
         $commands = $this
             ->commands
             ->filter(function (Command $command) {
-                if (!method_exists($command, 'shouldBeShown')) {
+                if (! method_exists($command, 'shouldBeShown')) {
                     return true;
                 }
 
@@ -130,6 +129,7 @@ class CommandPalette
                 collect($resource::get())
                     ->map(function (ResourceCommand $command, $index) {
                         $command->index = $index;
+
                         return $command;
                     })
             );
