@@ -30,6 +30,7 @@ class CommandController extends Controller
     public function execute(string $id): JsonResponse
     {
         getCommandPalette()->execute($id);
+
         return response()->json(getCommandPalette()->responses);
     }
 }

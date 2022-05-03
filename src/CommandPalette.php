@@ -72,7 +72,7 @@ class CommandPalette
      */
     public function registerCommandUnless(bool $condition, string|Contracts\Command $command): self
     {
-        if (!$command) {
+        if (! $command) {
             $this->registerCommand($command);
         }
 
@@ -104,7 +104,7 @@ class CommandPalette
         return $this
             ->commands
             ->filter(function (Contracts\Command $command) {
-                if (!method_exists($command, 'shouldBeShown')) {
+                if (! method_exists($command, 'shouldBeShown')) {
                     return true;
                 }
 
