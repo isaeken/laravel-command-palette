@@ -69,7 +69,7 @@ class InjectCommandPalette
         $content = $response->getContent();
 
         $head = getCommandPalette()->renderHead();
-        $widget = getCommandPalette()->renderWidget();
+        $widget = getCommandPalette()->renderComponent();
 
         $pos = strripos($content, '</head>');
         if (false !== $pos) {

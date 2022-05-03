@@ -1,9 +1,11 @@
 import React, {createRef} from 'react';
 import {Backdrop, Modal} from "@mui/material";
 import Group from "./Items/Group";
+import ItemCollection from "../ItemCollection";
 
 export default class Container extends React.Component {
   input = createRef();
+  items = new ItemCollection();
 
   constructor(props) {
     super(props);
@@ -11,72 +13,74 @@ export default class Container extends React.Component {
     this.state = {
       open: false,
       placeholder: props.placeholder ?? 'Search or jump to...',
+      value: '',
       tips: {
         enabled: true,
         texts: [],
       },
-      items: [
-        {
-          text: 'test1',
-          action: 'https://google.com'
-        },
-        {
-          type: 'group',
-          items: [
-            {
-              text: 'test2',
-              action: 'https://google.com'
-            },
-            {
-              text: 'test3',
-              action: 'https://google.com'
-            },
-            {
-              text: 'test4',
-              action: 'https://google.com'
-            },
-            {
-              text: 'test5',
-              action: 'https://google.com'
-            },
-          ],
-        },
-        {
-          text: 'test6',
-          action: 'https://google.com'
-        },
-        {
-          text: 'test7',
-          action: 'https://google.com'
-        },
-        {
-          type: 'group',
-          items: [
-            {
-              text: 'test8',
-              action: 'https://google.com'
-            },
-            {
-              text: 'test9',
-              action: 'https://google.com'
-            },
-            {
-              text: 'test10',
-              action: 'https://google.com'
-            },
-            {
-              text: 'test11',
-              action: 'https://google.com'
-            },
-          ],
-        },
-        {
-          text: 'test12',
-          action: 'https://google.com'
-        },
-      ],
       selected: -1,
     };
+
+    this.items.setItems([
+      {
+        text: 'test1',
+        action: 'https://google.com'
+      },
+      {
+        type: 'group',
+        items: [
+          {
+            text: 'test2',
+            action: 'https://google.com'
+          },
+          {
+            text: 'test3',
+            action: 'https://google.com'
+          },
+          {
+            text: 'test4',
+            action: 'https://google.com'
+          },
+          {
+            text: 'test5',
+            action: 'https://google.com'
+          },
+        ],
+      },
+      {
+        text: 'test6',
+        action: 'https://google.com'
+      },
+      {
+        text: 'test7',
+        action: 'https://google.com'
+      },
+      {
+        type: 'group',
+        items: [
+          {
+            text: 'test8',
+            action: 'https://google.com'
+          },
+          {
+            text: 'test9',
+            action: 'https://google.com'
+          },
+          {
+            text: 'test10',
+            action: 'https://google.com'
+          },
+          {
+            text: 'test11',
+            action: 'https://google.com'
+          },
+        ],
+      },
+      {
+        text: 'test12',
+        action: 'https://google.com'
+      },
+    ]);
   }
 
   componentDidMount() {
@@ -90,7 +94,7 @@ export default class Container extends React.Component {
         event.preventDefault();
         return true;
       } else if (event.code === "ArrowDown") {
-        if (!(this.state.selected > this.getItems().length - 2)) {
+        if (!(this.state.selected > this.items.getItems().length - 2)) {
           this.setState({selected: this.state.selected + 1});
         }
       } else if (event.code === "ArrowUp") {
@@ -118,7 +122,15 @@ export default class Container extends React.Component {
     this.setState({open: false});
   };
 
-  tips = () => {
+  getSelectedItem = () => {
+    return this.items.getItems()[this.items.getItems().findIndex((item, index) => index === this.state.selected)];
+  };
+
+  isSelectedItem = (item) => {
+    return item === this.getSelectedItem();
+  };
+
+  renderTips = () => {
     if (this.state.tips.enabled) {
       return (
         <div className="x-w-full x-pt-4 x-pb-2 x-px-3 x-text-sm x-tracking-wide x-box-border">
@@ -129,43 +141,21 @@ export default class Container extends React.Component {
     }
   };
 
-  getItems = () => {
-    let items = [];
-
-    for (const item of this.state.items) {
-      if (item.hasOwnProperty('type') && item.type === 'group') {
-        items = [...items, ...item.items];
-      } else {
-        items.push(item);
-      }
-    }
-
-    return items;
-  };
-
-  isSelectedItem = (item) => {
-    let index = 0;
-    for (const _item of this.getItems()) {
-      if (_item === item && index === this.state.selected) {
-        return true;
-      }
-
-      index++;
-    }
-
-    return false;
-  };
-
-  items = () => {
+  renderItems = () => {
     return (
       <div className="x-divide-y">
         <Group
           title={null}
           description={null}
-          items={this.state.items}
+          items={this.items.getItems(true, this.state.value)}
           checkSelectedItem={(object) => {
             return this.isSelectedItem(object);
-          }}/>
+          }}
+          select={(object) => {
+            let index = this.items.getItems().findIndex((item) => item === object);
+            this.setState({selected: index});
+          }}
+        />
       </div>
     );
   };
@@ -192,10 +182,16 @@ export default class Container extends React.Component {
             <input
               ref={this.input}
               placeholder={this.state.placeholder}
+              value={this.state.value}
+              onChange={(event) => {
+                this.setState({
+                  value: event.target.value,
+                });
+              }}
               className="x-font-roboto x-text-xl x-box-border x-py-4 x-px-4 x-block x-outline-none x-border-0 x-border-b x-border-gray-300 x-rounded-t-xl x-bg-transparent x-w-full"/>
             <div className="x-w-full x-max-h-96 x-overflow-y-auto">
-              {this.tips()}
-              {this.items()}
+              {this.renderTips()}
+              {this.renderItems()}
             </div>
           </div>
         </Modal>

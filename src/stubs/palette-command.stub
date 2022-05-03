@@ -1,0 +1,56 @@
+<?php
+
+namespace {{ namespace }};
+
+use IsaEken\LaravelCommandPalette\Command;
+
+class {{ class }} extends Command
+{
+    /**
+     * Command shown name.
+     *
+     * @var string $name
+     */
+    protected string $name = 'Example command';
+
+    /**
+     * Command description.
+     *
+     * @var string|null $description
+     */
+    protected string|null $description = 'This is a example command and its does nothing.';
+
+    /**
+     * Command icon name.
+     *
+     * @var string|null $icon
+     */
+    protected string|null $icon = null;
+
+    /**
+     * Group ID for command.
+     *
+     * @var string|int|null $groupId
+     */
+    protected string|int|null $groupId = null;
+
+    /**
+     * Check if this command shown.
+     *
+     * @return bool
+     */
+    public function shouldBeShown(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Execute the command.
+     *
+     * @return void
+     */
+    public function execute(): void
+    {
+        // ...
+    }
+}
